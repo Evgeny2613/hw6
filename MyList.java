@@ -1,6 +1,6 @@
 package lessons.lesson6.list;
 
-public interface MyArrayList {
+public interface MyList {
     int size();
     boolean contains(int value);
     void set(int index, int value);

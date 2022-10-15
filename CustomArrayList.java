@@ -1,7 +1,36 @@
 package lessons.lesson6.list;
 
-public class CustomArrayList implements MyArrayList { //Ours array list
-    
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+public class CustomArrayList implements MyList, Iterable<Integer> { //Ours array list
+    public Iterator<Integer> smallToBigIterator() {
+        return new SmallToBigIterator();
+    }
+
+    public class SmallToBigIterator implements Iterator<Integer> {
+        private int[] source = new int[size];
+        private int position = -1;
+
+        public SmallToBigIterator() {
+            System.arraycopy(data, 0, source, 0, size);
+            Arrays.sort(source);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return ++position < size;
+        }
+
+        @Override
+        public Integer next() {
+            if (position < 0 | position >= size)
+                throw new NoSuchElementException();
+            return source[position];
+        }
+    }
+
     private int size = 0; // visible size of the array list for user
 
     private int[] data; // here the elements will take place
@@ -10,6 +39,52 @@ public class CustomArrayList implements MyArrayList { //Ours array list
 
     public CustomArrayList() {
         data = new int[INITIAL_CAPACITY]; // initiating array
+    }
+
+
+
+    public Iterator<Integer> iterator() {
+        return new Iterator<Integer>() {
+            private int position = -1; // order number of element
+
+            @Override
+            public boolean hasNext() {
+                return ++position < size;
+            }
+
+            @Override
+            public Integer next() {
+                if (position < 0 | position >= size)
+                    throw new NoSuchElementException();
+                return data[position];
+            }
+        };
+    }
+
+    public Iterator<Integer> backwardIterator() {
+        return new Iterator<Integer>() {
+            private int position = size;
+
+            @Override
+            public boolean hasNext() {
+                return --position >= 0;
+            }
+
+            @Override
+            public Integer next() {
+                if (position < 0 | position >= size)
+                    throw new NoSuchElementException();
+                return data[position];
+            }
+
+            @Override
+            public void remove() {
+                if (position < 0 | position >= size)
+                    throw new NoSuchElementException();
+                CustomArrayList.this.remove(position);
+                position--;
+            }
+        };
     }
 
     @Override
@@ -71,7 +146,7 @@ public class CustomArrayList implements MyArrayList { //Ours array list
         if (index < 0 | index >= size)
             throw new IndexOutOfBoundsException();
         for (int i = index; i < size; i++) {
-                data[i] = data[i + 1];
+            data[i] = data[i + 1];
         }
         size--;
 
